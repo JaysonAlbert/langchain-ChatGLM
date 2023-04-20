@@ -98,6 +98,9 @@ class ChatGLM(BaseLLM):
 
     def __init__(self, **data: Any):
         super().__init__()
+        callback_manager = data.pop("callback_manager", None)
+        self.set_callback_manager(callback_manager)
+
 
     @property
     def _llm_type(self) -> str:
@@ -150,7 +153,7 @@ class ChatGLM(BaseLLM):
                     temperature=self.temperature,
                 )
                 final_response = parse_text(response)
-            generations.append(Generation(text=final_response))
+            generations.append([Generation(text=final_response)])
             
         return LLMResult(generations=generations)
     
