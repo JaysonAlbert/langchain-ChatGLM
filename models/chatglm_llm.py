@@ -1,17 +1,52 @@
 import json
-from langchain.llms.base import LLM
+from langchain.llms.base import BaseLLM
 from typing import Optional, List
 from langchain.llms.utils import enforce_stop_tokens
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 import torch
 from configs.model_config import LLM_DEVICE
 
-from typing import Dict, Tuple, Union, Optional
+from typing import Dict, Tuple, Union, Optional, Any
+
+from langchain.schema import Generation, LLMResult
+
 
 DEVICE = LLM_DEVICE
 DEVICE_ID = "0" if torch.cuda.is_available() else None
 CUDA_DEVICE = f"{DEVICE}:{DEVICE_ID}" if DEVICE_ID else DEVICE
 
+
+def parse_text(text):
+    """copy from https://github.com/GaiZhenbiao/ChuanhuChatGPT/"""
+    lines = text.split("\n")
+    lines = [line for line in lines if line != ""]
+    count = 0
+    for i, line in enumerate(lines):
+        if "```" in line:
+            count += 1
+            items = line.split('`')
+            if count % 2 == 1:
+                lines[i] = f'<pre><code class="language-{items[-1]}">'
+            else:
+                lines[i] = f'<br></code></pre>'
+        else:
+            if i > 0:
+                if count % 2 == 1:
+                    line = line.replace("`", "\`")
+                    line = line.replace("<", "&lt;")
+                    line = line.replace(">", "&gt;")
+                    line = line.replace(" ", "&nbsp;")
+                    line = line.replace("*", "&ast;")
+                    line = line.replace("_", "&lowbar;")
+                    line = line.replace("-", "&#45;")
+                    line = line.replace(".", "&#46;")
+                    line = line.replace("!", "&#33;")
+                    line = line.replace("(", "&#40;")
+                    line = line.replace(")", "&#41;")
+                    line = line.replace("$", "&#36;")
+                lines[i] = "<br>"+line
+    text = "".join(lines)
+    return text
 
 def torch_gc():
     if torch.cuda.is_available():
@@ -50,7 +85,7 @@ def auto_configure_device_map(num_gpus: int) -> Dict[str, int]:
     return device_map
 
 
-class ChatGLM(LLM):
+class ChatGLM(BaseLLM):
     max_token: int = 10000
     temperature: float = 0.01
     top_p = 0.9
@@ -58,8 +93,10 @@ class ChatGLM(LLM):
     tokenizer: object = None
     model: object = None
     history_len: int = 10
+    streaming: bool = True
+    verbose: bool = True
 
-    def __init__(self):
+    def __init__(self, **data: Any):
         super().__init__()
 
     @property
@@ -81,6 +118,46 @@ class ChatGLM(LLM):
             response = enforce_stop_tokens(response, stop)
         self.history = self.history+[[None, response]]
         return response
+    
+    def _generate(self,
+                  prompts:  List[str],
+                  stop: Optional[List[str]] = None) -> LLMResult:
+        
+        generations = []
+        for prompt in prompts:
+            if self.streaming:
+                final_response = ""
+                for response, _ in self.model.stream_chat(
+                            self.tokenizer,
+                            prompt,
+                            history=self.history[-self.history_len:] if self.history_len>0 else [],
+                            max_length=self.max_token,
+                            temperature=self.temperature,
+                ):
+                    parseed_response = parse_text(response)
+                    self.callback_manager.on_llm_new_token(
+                        parseed_response,
+                        verbose=self.verbose
+                    )
+                    final_response += parseed_response
+
+            else:
+                response, _ = self.model.chat(
+                    self.tokenizer,
+                    prompt,
+                    history=self.history[-self.history_len:] if self.history_len>0 else [],
+                    max_length=self.max_token,
+                    temperature=self.temperature,
+                )
+                final_response = parse_text(response)
+            generations.append(Generation(text=final_response))
+            
+        return LLMResult(generations=generations)
+    
+    async def _agenerate(
+        self, prompts: List[str], stop: Optional[List[str]] = None
+    ) -> LLMResult:
+        return self._generate(prompts[0], stop)
 
     def load_model(self,
                    model_name_or_path: str = "THUDM/chatglm-6b",
@@ -115,6 +192,7 @@ class ChatGLM(LLM):
                         config=model_config,
                         trust_remote_code=True, 
                         **kwargs)
+                    .quantize(4)
                     .half()
                     .cuda()
                 )

@@ -12,7 +12,7 @@ embedding_model_dict = {
 EMBEDDING_MODEL = "text2vec"
 
 # Embedding running device
-EMBEDDING_DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+EMBEDDING_DEVICE = "cpu"
 
 # supported LLM models
 llm_model_dict = {
@@ -28,9 +28,8 @@ LLM_MODEL = "chatglm-6b"
 USE_PTUNING_V2 = False
 
 # LLM running device
-LLM_DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+LLM_DEVICE = "cuda"
 
 VS_ROOT_PATH = "./vector_store/"
 
 UPLOAD_ROOT_PATH = "./content/"
-

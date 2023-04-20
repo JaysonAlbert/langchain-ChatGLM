@@ -10,6 +10,8 @@ from configs.model_config import *
 import datetime
 from typing import List
 from textsplitter import ChineseTextSplitter
+from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 # return top-k text chunk from vector store
 VECTOR_SEARCH_TOP_K = 6
@@ -43,7 +45,8 @@ class LocalDocQA:
                  top_k=VECTOR_SEARCH_TOP_K,
                  use_ptuning_v2: bool = USE_PTUNING_V2
                  ):
-        self.llm = ChatGLM()
+        callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+        self.llm = ChatGLM(callback_manager=callback_manager)
         self.llm.load_model(model_name_or_path=llm_model_dict[llm_model],
                             llm_device=llm_device,
                             use_ptuning_v2=use_ptuning_v2)
