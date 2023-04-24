@@ -97,12 +97,6 @@ class ChatGLM(BaseLLM):
     streaming: bool = True
     verbose: bool = True
 
-    def __init__(self, **data: Any):
-        super().__init__()
-        callback_manager = data.pop("callback_manager", None)
-        self.set_callback_manager(callback_manager)
-
-
     @property
     def _llm_type(self) -> str:
         return "ChatGLM"
@@ -141,9 +135,10 @@ class ChatGLM(BaseLLM):
                   stop: Optional[List[str]] = None) -> LLMResult:
         
         generations = []
+        parsed_response = ""
         for prompt in prompts:
             if self.streaming:
-                final_response = ""
+                parsed_response = ""
                 for response, _ in self.model.stream_chat(
                             self.tokenizer,
                             prompt,
@@ -151,12 +146,11 @@ class ChatGLM(BaseLLM):
                             max_length=self.max_token,
                             temperature=self.temperature,
                 ):
-                    parseed_response = parse_text(response)
+                    parsed_response = parse_text(response)
                     self.callback_manager.on_llm_new_token(
-                        parseed_response,
+                        parsed_response,
                         verbose=self.verbose
                     )
-                    final_response += parseed_response
 
             else:
                 response, _ = self.model.chat(
@@ -166,9 +160,10 @@ class ChatGLM(BaseLLM):
                     max_length=self.max_token,
                     temperature=self.temperature,
                 )
-                final_response = parse_text(response)
-            generations.append([Generation(text=final_response)])
-            
+                parsed_response = parse_text(response)
+            generations.append([Generation(text=parsed_response)])
+
+        self.history = self.history + [[None, parsed_response]]
         return LLMResult(generations=generations)
     
     async def _agenerate(

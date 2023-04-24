@@ -1,19 +1,20 @@
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.document_loaders import UnstructuredFileLoader
-from models.chatglm_llm import ChatGLM
-import sentence_transformers
-import os
-from configs.model_config import *
 import datetime
+import logging
+import os
 from typing import List
-from textsplitter import ChineseTextSplitter
-from langchain.callbacks.base import CallbackManager
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-import  logging
 
+from gradio import Chatbot
+from langchain.callbacks.base import CallbackManager
+from langchain.chains import RetrievalQA
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain.prompts import PromptTemplate
+from langchain.vectorstores import FAISS
+
+from chains.chat_bot_callback_handler import ChatBotCallbackHandler
+from configs.model_config import *
+from models.chatglm_llm import ChatGLM
+from textsplitter import ChineseTextSplitter
 
 # return top-k text chunk from vector store
 VECTOR_SEARCH_TOP_K = 6
@@ -39,6 +40,9 @@ class LocalDocQA:
     embeddings: object = None
     top_k: int = VECTOR_SEARCH_TOP_K
 
+    def __init__(self):
+        self._chatbot: Chatbot = None
+
     def init_cfg(self,
                  embedding_model: str = EMBEDDING_MODEL,
                  embedding_device=EMBEDDING_DEVICE,
@@ -48,11 +52,19 @@ class LocalDocQA:
                  top_k=VECTOR_SEARCH_TOP_K,
                  use_ptuning_v2: bool = USE_PTUNING_V2
                  ):
-        callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+        callback_manager = CallbackManager([ChatBotCallbackHandler(bot_getter=self.get_chatbot)])
         self.llm = ChatGLM(callback_manager=callback_manager)
+        # self.llm = ChatGLM()
         self.llm.load_model(model_name_or_path=llm_model_dict[llm_model],
                             llm_device=llm_device,
                             use_ptuning_v2=use_ptuning_v2)
+
+        # responses = [
+        #     "Action: Python REPL\nAction Input: print(2 + 2)",
+        #     "Final Answer: 4"
+        # ]
+        # self.llm = FakeListLLM(responses=responses)
+
         self.llm.history_len = llm_history_len
 
         self.embeddings = HuggingFaceEmbeddings(model_name=embedding_model_dict[embedding_model],
@@ -141,3 +153,9 @@ class LocalDocQA:
         result = knowledge_chain({"query": query})
         self.llm.history[-1][0] = query
         return result, self.llm.history
+
+    def set_chatbot(self, chatbot):
+        self._chatbot = chatbot
+
+    def get_chatbot(self):
+        return self._chatbot

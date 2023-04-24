@@ -158,6 +158,7 @@ with gr.Blocks(css=block_css) as demo:
                 chatbot = gr.Chatbot([[None, init_message], [None, model_status.value]],
                                      elem_id="chat-box",
                                      show_label=False).style(height=750)
+                local_doc_qa.set_chatbot(chatbot)
                 query = gr.Textbox(show_label=False,
                                    placeholder="请输入提问内容，按回车进行提交",
                                    ).style(container=False)
