@@ -109,14 +109,27 @@ class ChatGLM(BaseLLM):
         response, _ = self.model.chat(
             self.tokenizer,
             prompt,
-            history=self.history[-self.history_len:] if self.history_len>0 else [],
+            history=self.history[-self.history_len:] if self.history_len > 0 else [],
             max_length=self.max_token,
             temperature=self.temperature,
         )
         torch_gc()
         if stop is not None:
             response = enforce_stop_tokens(response, stop)
-        self.history = self.history+[[None, response]]
+        self.history = self.history + [[None, response]]
+        return response
+
+    def chat(self,
+             prompt: str) -> str:
+        response, _ = self.model.chat(
+            self.tokenizer,
+            prompt,
+            history=self.history[-self.history_len:] if self.history_len > 0 else [],
+            max_length=self.max_token,
+            temperature=self.temperature,
+        )
+        torch_gc()
+        self.history = self.history + [[None, response]]
         return response
     
     def _generate(self,
@@ -179,7 +192,8 @@ class ChatGLM(BaseLLM):
                 prefix_encoder_file.close()
                 model_config.pre_seq_len = prefix_encoder_config['pre_seq_len']
                 model_config.prefix_projection = prefix_encoder_config['prefix_projection']
-            except Exception:
+            except Exception as e:
+                print(e)
                 print("加载PrefixEncoder config.json失败")
 
         if torch.cuda.is_available() and llm_device.lower().startswith("cuda"):
@@ -190,7 +204,7 @@ class ChatGLM(BaseLLM):
                     AutoModel.from_pretrained(
                         model_name_or_path,
                         config=model_config,
-                        trust_remote_code=True, 
+                        trust_remote_code=True,
                         **kwargs)
                     .quantize(4)
                     .half()
@@ -224,7 +238,8 @@ class ChatGLM(BaseLLM):
                         new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
                 self.model.transformer.prefix_encoder.load_state_dict(new_prefix_state_dict)
                 self.model.transformer.prefix_encoder.float()
-            except Exception:
+            except Exception as e:
+                print(e)
                 print("加载PrefixEncoder模型参数失败")
 
         self.model = self.model.eval()
