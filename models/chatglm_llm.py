@@ -113,16 +113,29 @@ class ChatGLM(BaseLLM):
         response, _ = self.model.chat(
             self.tokenizer,
             prompt,
-            history=self.history[-self.history_len:] if self.history_len>0 else [],
+            history=self.history[-self.history_len:] if self.history_len > 0 else [],
             max_length=self.max_token,
             temperature=self.temperature,
         )
         torch_gc()
         if stop is not None:
             response = enforce_stop_tokens(response, stop)
-        self.history = self.history+[[None, response]]
+        self.history = self.history + [[None, response]]
         return response
-    
+
+    def chat(self,
+             prompt: str) -> str:
+        response, _ = self.model.chat(
+            self.tokenizer,
+            prompt,
+            history=self.history[-self.history_len:] if self.history_len > 0 else [],
+            max_length=self.max_token,
+            temperature=self.temperature,
+        )
+        torch_gc()
+        self.history = self.history + [[None, response]]
+        return response
+
     def _generate(self,
                   prompts:  List[str],
                   stop: Optional[List[str]] = None) -> LLMResult:
@@ -194,7 +207,7 @@ class ChatGLM(BaseLLM):
                     AutoModel.from_pretrained(
                         model_name_or_path,
                         config=model_config,
-                        trust_remote_code=True, 
+                        trust_remote_code=True,
                         **kwargs)
                     .quantize(4)
                     .half()
