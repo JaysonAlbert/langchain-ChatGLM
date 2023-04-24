@@ -12,6 +12,8 @@ from typing import List
 from textsplitter import ChineseTextSplitter
 from langchain.callbacks.base import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+import  logging
+
 
 # return top-k text chunk from vector store
 VECTOR_SEARCH_TOP_K = 6
@@ -63,17 +65,16 @@ class LocalDocQA:
         loaded_files = []
         if isinstance(filepath, str):
             if not os.path.exists(filepath):
-                print("路径不存在")
+                logging.info("路径不存在")
                 return None
             elif os.path.isfile(filepath):
                 file = os.path.split(filepath)[-1]
                 try:
                     docs = load_file(filepath)
-                    print(f"{file} 已成功加载")
+                    logging.info(f"{file} 已成功加载")
                     loaded_files.append(filepath)
                 except Exception as e:
-                    print(e)
-                    print(f"{file} 未能成功加载")
+                    logging.error(f"{file} 未能成功加载", e)
                     return None
             elif os.path.isdir(filepath):
                 docs = []
@@ -81,21 +82,19 @@ class LocalDocQA:
                     fullfilepath = os.path.join(filepath, file)
                     try:
                         docs += load_file(fullfilepath)
-                        print(f"{file} 已成功加载")
+                        logging.info(f"{file} 已成功加载")
                         loaded_files.append(fullfilepath)
                     except Exception as e:
-                        print(e)
-                        print(f"{file} 未能成功加载")
+                        logging.error(f"{file} 未能成功加载", e)
         else:
             docs = []
             for file in filepath:
                 try:
                     docs += load_file(file)
-                    print(f"{file} 已成功加载")
+                    logging.info(f"{file} 已成功加载")
                     loaded_files.append(file)
                 except Exception as e:
-                    print(e)
-                    print(f"{file} 未能成功加载")
+                    logging.error(f"{file} 未能成功加载", e)
 
         if vs_path and os.path.isdir(vs_path):
             vector_store = FAISS.load_local(vs_path, self.embeddings)

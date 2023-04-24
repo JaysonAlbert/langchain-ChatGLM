@@ -2,6 +2,7 @@ from configs.model_config import *
 from chains.local_doc_qa import LocalDocQA
 import os
 import nltk
+import logging
 
 nltk.data.path = [os.path.join(os.path.dirname(__file__), "nltk_data")] + nltk.data.path
 
@@ -32,6 +33,6 @@ if __name__ == "__main__":
                                                                 vs_path=vs_path,
                                                                 chat_history=history)
         if REPLY_WITH_SOURCE:
-            print(resp)
+            logging.info(resp)
         else:
-            print(resp["result"])
+            logging.info(resp["result"])

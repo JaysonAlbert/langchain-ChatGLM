@@ -5,6 +5,7 @@ from langchain.llms.utils import enforce_stop_tokens
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 import torch
 from configs.model_config import LLM_DEVICE
+import logging
 
 from typing import Dict, Tuple, Union, Optional, Any
 
@@ -182,8 +183,8 @@ class ChatGLM(BaseLLM):
                 prefix_encoder_file.close()
                 model_config.pre_seq_len = prefix_encoder_config['pre_seq_len']
                 model_config.prefix_projection = prefix_encoder_config['prefix_projection']
-            except Exception:
-                print("加载PrefixEncoder config.json失败")
+            except Exception as e:
+                logging.error("加载PrefixEncoder config.json失败", e)
 
         if torch.cuda.is_available() and llm_device.lower().startswith("cuda"):
             # 根据当前设备GPU数量决定是否进行多卡部署
@@ -227,7 +228,7 @@ class ChatGLM(BaseLLM):
                         new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
                 self.model.transformer.prefix_encoder.load_state_dict(new_prefix_state_dict)
                 self.model.transformer.prefix_encoder.float()
-            except Exception:
-                print("加载PrefixEncoder模型参数失败")
+            except Exception as e:
+                logging.error("加载PrefixEncoder模型参数失败", e)
 
         self.model = self.model.eval()

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import re
+import logging
 
 def get_latest_tag():
     output = subprocess.check_output(['git', 'tag'])
@@ -22,29 +23,29 @@ def update_version_number(latest_tag, increment):
     return new_version
 
 def main():
-    print("当前最近的Git标签：")
+    logging.info("当前最近的Git标签：")
     latest_tag = get_latest_tag()
-    print(latest_tag)
+    logging.info(latest_tag)
 
-    print("请选择要递增的版本号部分（X, Y, Z）：")
+    logging.info("请选择要递增的版本号部分（X, Y, Z）：")
     increment = input().upper()
 
     while increment not in ['X', 'Y', 'Z']:
-        print("输入错误，请输入X, Y或Z：")
+        logging.info("输入错误，请输入X, Y或Z：")
         increment = input().upper()
 
     new_version = update_version_number(latest_tag, increment)
-    print(f"新的版本号为：{new_version}")
+    logging.info(f"新的版本号为：{new_version}")
 
-    print("确认更新版本号并推送到远程仓库？（y/n）")
+    logging.info("确认更新版本号并推送到远程仓库？（y/n）")
     confirmation = input().lower()
 
     if confirmation == 'y':
         subprocess.run(['git', 'tag', new_version])
         subprocess.run(['git', 'push', 'origin', new_version])
-        print("新版本号已创建并推送到远程仓库。")
+        logging.info("新版本号已创建并推送到远程仓库。")
     else:
-        print("操作已取消。")
+        logging.info("操作已取消。")
 
 if __name__ == '__main__':
     main()

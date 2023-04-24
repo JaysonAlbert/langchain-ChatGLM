@@ -7,6 +7,7 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from starlette.responses import RedirectResponse
+import logging
 
 app = FastAPI()
 
@@ -51,7 +52,7 @@ async def upload_file(UserFile: UploadFile=File(...)):
     try:
         filepath = './content/' + UserFile.filename
         content = await UserFile.read()
-        # print(UserFile.filename)
+        # logging.info(UserFile.filename)
         with open(filepath, 'wb') as f:
             f.write(content)
         vs_path, files = local_doc_qa.init_knowledge_vector_store(filepath)

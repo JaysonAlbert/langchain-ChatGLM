@@ -4,6 +4,7 @@ import shutil
 from chains.local_doc_qa import LocalDocQA
 from configs.model_config import *
 import nltk
+import logging
 
 nltk.data.path = [os.path.join(os.path.dirname(__file__), "nltk_data")] + nltk.data.path
 
@@ -47,7 +48,7 @@ def get_answer(query, vs_path, history, mode):
 
 def update_status(history, status):
     history = history + [[None, status]]
-    print(status)
+    logging.info(status)
     return history
 
 
@@ -57,8 +58,10 @@ def init_model():
         local_doc_qa.llm._call("你好")
         return """模型已成功加载，可以开始对话，或从右侧选择模式后开始对话"""
     except Exception as e:
-        print(e)
-        return """模型未成功加载，请到页面左上角"模型配置"选项卡中重新选择后点击"加载模型"按钮"""
+        model_status = """模型未成功加载，请到页面左上角"模型配置"选项卡中重新选择后点击"加载模型"按钮"""
+
+        logging.error(model_status, e)
+        return model_status
 
 
 def reinit_model(llm_model, embedding_model, llm_history_len, use_ptuning_v2, top_k, history):
@@ -70,8 +73,8 @@ def reinit_model(llm_model, embedding_model, llm_history_len, use_ptuning_v2, to
                               top_k=top_k)
         model_status = """模型已成功重新加载，可以开始对话，或从右侧选择模式后开始对话"""
     except Exception as e:
-        print(e)
         model_status = """模型未成功重新加载，请到页面左上角"模型配置"选项卡中重新选择后点击"加载模型"按钮"""
+        logging.error(model_status, e)
     return history + [[None, model_status]]
 
 

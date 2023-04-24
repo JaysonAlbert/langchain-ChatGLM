@@ -8,6 +8,7 @@ from langchain.document_loaders import DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Pinecone
+import logging
 
 #一些配置文件
 openai_key="你的key" # 注册 openai.com 后获得
@@ -46,7 +47,7 @@ try:
 		# 获取向量并储存到pinecone
 		Pinecone.from_documents([document], embeddings, index_name=pinecone_index)
 except Exception as e:
-    print(f"Error: {e}")
+    logging.error(f"Error: {e}", e)
     quit()
 
 
