@@ -1,0 +1,1297 @@
+openapi: 3.0.1
+info:
+  title: CSP api文档
+  description: 资金结算系统
+  termsOfService: http://www.99fund.com
+  version: 2.0.0
+servers:
+- url: http://localhost:12888/
+tags:
+- name: settlement-flow-template-controller
+  description: Settlement Flow Template Controller
+- name: parameter-stats-controller
+  description: Parameter Stats Controller
+- name: fund-settlement-param-controller
+  description: Fund Settlement Param Controller
+- name: fund-param-controller
+  description: Fund Param Controller
+paths:
+  /csp/v1/parameter/handle/fund/queryOne:
+    get:
+      tags:
+      - fund-param-controller
+      summary: 查询单个基金
+      operationId: queryFundUsingGET
+      parameters:
+      - name: fundCode
+        in: query
+        description: fundCode
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: status
+        schema:
+          type: string
+      - name: querySign
+        in: query
+        description: querySign
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«QsFundInfoDetailsPo»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/handle/fundSettlement/one:
+    get:
+      tags:
+      - fund-settlement-param-controller
+      summary: 查询单条基金资金交收配置
+      operationId: selectOneUsingGET
+      parameters:
+      - name: fundCode
+        in: query
+        description: 基金代码
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: 处理状态
+        schema:
+          type: string
+      - name: querySign
+        in: query
+        description: 查询标识
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«FundInfoExtDetailDto»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/handle/template/names:
+    get:
+      tags:
+      - settlement-flow-template-controller
+      summary: settlementNameList
+      operationId: settlementNameListUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«SelectItemPo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/handle/template/one:
+    get:
+      tags:
+      - settlement-flow-template-controller
+      summary: 查询单个指令划拨模板
+      operationId: queryOneTemplateUsingGET
+      parameters:
+      - name: tplCode
+        in: query
+        description: tplCode
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: status
+        schema:
+          type: string
+      - name: querySign
+        in: query
+        description: querySign
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«SettlementFlowTemplateDto»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/account/Item:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: cls代销账户下拉列表
+      operationId: dxAccountItemUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«ClsSelectItemVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/account/incompleteInfo:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 查询非全量账户信息
+      operationId: queryIncompleteAccountsUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«FileBankAccountInfoPo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/confFare/group:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 费用配置——按状态分组
+      operationId: confFareGroupUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/fund/group:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 基金信息——按状态分组
+      operationId: fundGroupUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/fund/isZhongDeng:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 判断是否中登基金
+      operationId: isZhongDengUsingGET
+      parameters:
+      - name: fundCode
+        in: query
+        description: fundCode
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«string»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/fund/selectItem:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 查询所有基金下拉列表
+      operationId: queryAllFundItemUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/fundSettlement/group:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 资金交收配置——按状态分组
+      operationId: fundSettlementGroupUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/institution/group:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 机构信息——按状态分组
+      operationId: institutionGroupUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/institution/selectItem:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 查询所有机构下拉列表
+      operationId: queryAllInstitutionItemUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/rule/group:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 交收规则配置——按状态分组
+      operationId: ruleGroupUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/rule/selectItem:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 查询所有交收规则下拉列表
+      operationId: queryAllRuleItemUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/template/group:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 指令模板配置——按状态分组
+      operationId: templateGroupUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /csp/v1/parameter/info/template/selectItem:
+    get:
+      tags:
+      - parameter-stats-controller
+      summary: 查询所有指令模板下拉列表
+      operationId: queryAlTemplateItemUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+components:
+  schemas:
+    AgencySettlement:
+      type: object
+      properties:
+        configId:
+          type: string
+          description: 模板编号
+        organ:
+          type: array
+          description: 机构列表
+          items:
+            type: string
+    AgencySettlementConfigDto:
+      type: object
+      properties:
+        defaultSettlement:
+          type: string
+        organConfigs:
+          type: array
+          description: 机构交收列表
+          items:
+            $ref: '#/components/schemas/AgencySettlement'
+    ClsSelectItemVo:
+      type: object
+      properties:
+        cascano:
+          type: string
+        checked:
+          type: boolean
+        text:
+          type: string
+        value:
+          type: string
+    ConfCommandMonitorPo:
+      type: object
+      properties:
+        accomatch:
+          type: string
+        acconamematch:
+          type: string
+        commandno:
+          type: string
+        remindflag:
+          type: string
+        remindtime:
+          type: string
+        summarymatch:
+          type: string
+        targetacco:
+          type: string
+        targetacconame:
+          type: string
+        targetsummary:
+          type: string
+        targetusage:
+          type: string
+        usagematch:
+          type: string
+    ConfCommandPo:
+      type: object
+      properties:
+        ampm:
+          type: string
+        auto:
+          type: string
+        autoflag:
+          type: string
+        channeltype:
+          type: string
+        channeltypeFlag:
+          type: string
+        checksql:
+          type: string
+        commandname:
+          type: string
+        commandno:
+          type: string
+        commandtype:
+          type: string
+        commandtypeFlag:
+          type: string
+        confCommandMonitor:
+          $ref: '#/components/schemas/ConfCommandMonitorPo'
+        confLends:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfLendPo'
+        confPartners:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfPartnerPo'
+        confid:
+          type: string
+        confname:
+          type: string
+        currencyType:
+          type: string
+        dianzitype:
+          type: string
+        dianzitypeFlag:
+          type: string
+        fundids:
+          type: string
+        inAcctTypeList:
+          type: array
+          items:
+            type: string
+        inaccoid:
+          type: string
+        inaccoidName:
+          type: string
+        inaccotype:
+          type: string
+        infund:
+          type: string
+        inserttimestamp:
+          type: string
+        mergegroup:
+          type: string
+        mergerule:
+          type: string
+        needremit:
+          type: string
+        needremitFlag:
+          type: string
+        operator:
+          type: string
+        outAcctTypeList:
+          type: array
+          items:
+            type: string
+        outaccoid:
+          type: string
+        outaccoidName:
+          type: string
+        outaccotype:
+          type: string
+        paytype:
+          type: string
+        routetype:
+          type: string
+        routetypeFlag:
+          type: string
+        rsv1:
+          type: string
+        rsv2:
+          type: string
+        settlerule:
+          type: string
+        settlerulename:
+          type: string
+        status:
+          type: string
+        statusFlag:
+          type: string
+        summary:
+          type: string
+        updatetimestamp:
+          type: string
+        ver:
+          type: number
+        vliquidationAccount:
+          type: boolean
+        vtrusteeAccount:
+          type: boolean
+    ConfLendPo:
+      type: object
+      properties:
+        bankno:
+          type: string
+        busitype:
+          type: string
+        commandno:
+          type: string
+        commandtype:
+          type: string
+        ecommerce:
+          type: string
+        fundid:
+          type: string
+        incommandno:
+          type: string
+        ininnercommandno:
+          type: string
+        inserttimestamp:
+          type: string
+        key:
+          type: string
+        outcommandno:
+          type: string
+        outinnercommandno:
+          type: string
+        rsv1:
+          type: string
+        rsv2:
+          type: string
+        rulename:
+          type: string
+        ruleorder:
+          type: string
+        rulesign:
+          type: string
+        seatno:
+          type: string
+        status:
+          type: string
+        updatetimestamp:
+          type: string
+        ver:
+          type: number
+    ConfPartnerPo:
+      type: object
+      properties:
+        bankno:
+          type: string
+        busitype:
+          type: string
+        commandno:
+          type: string
+        commandtype:
+          type: string
+        ecommerce:
+          type: string
+        findidArr:
+          type: array
+          items:
+            type: object
+            properties: {}
+        fundid:
+          type: string
+        incommandno:
+          type: string
+        ininnercommandno:
+          type: string
+        inserttimestamp:
+          type: string
+        outcommandno:
+          type: string
+        outinnercommandno:
+          type: string
+        rsv1:
+          type: string
+        rsv2:
+          type: string
+        rulename:
+          type: string
+        ruleorder:
+          type: string
+        rulesign:
+          type: string
+        seatno:
+          type: string
+        status:
+          type: string
+        updatetimestamp:
+          type: string
+        ver:
+          type: number
+    FileBankAccountInfoPo:
+      required:
+      - originsign
+      - showsign
+      type: object
+      properties:
+        accoid:
+          type: string
+        accountno:
+          type: string
+        accounttype:
+          type: string
+        accounttypecode:
+          type: string
+        address:
+          type: string
+        bankaccoid:
+          type: string
+        bankbranch:
+          type: string
+        bankname:
+          type: string
+        bankno:
+          type: string
+        city:
+          type: string
+        commandCurrency:
+          type: string
+        companyCity:
+          type: string
+        companyCountry:
+          type: string
+        companyPostCode:
+          type: string
+        companyProvince:
+          type: string
+        companyStreet:
+          type: string
+        currency:
+          type: string
+        currencytype:
+          type: string
+        desc:
+          type: string
+        distributorAccount:
+          type: boolean
+        ecommerce:
+          type: string
+        ecommercename:
+          type: string
+        fbankcode:
+          type: string
+        fbclinkno:
+          type: string
+        fchannel:
+          type: string
+        fdesc:
+          type: string
+        filedate:
+          type: string
+        fundcode:
+          type: string
+        fundname:
+          type: string
+        fundtype:
+          type: string
+        fusage:
+          type: string
+        mainaccount:
+          type: string
+        mergeFund:
+          type: string
+        nameinbank:
+          type: string
+        originsign:
+          type: string
+          description: 是否系统原有账户
+        paymentAccoName:
+          type: string
+        paymentBankAcco:
+          type: string
+        paymentBankName:
+          type: string
+        paymentUnionBankNo:
+          type: string
+        province:
+          type: string
+        provisionForBankNo:
+          type: string
+        provisionForTransfer:
+          type: string
+        shZdAccount:
+          type: boolean
+        shortfund:
+          type: string
+        shortname:
+          type: string
+        showsign:
+          type: string
+          description: 是否展示
+        status:
+          type: string
+        swiftCode:
+          type: string
+        sync:
+          type: string
+        szzdAccount:
+          type: boolean
+        tradetype:
+          type: string
+        unionbankno:
+          type: string
+        updatetimestamp:
+          type: string
+        zdAccoName:
+          type: string
+        zdAccount:
+          type: boolean
+        zdBankAcco:
+          type: string
+        zdBankName:
+          type: string
+        zdUnionBankNo:
+          type: string
+    FundInfoExtDetailDto:
+      required:
+      - fundcode
+      - qsFundInfoDto
+      type: object
+      properties:
+        agencySettlementConfigDto:
+          $ref: '#/components/schemas/AgencySettlementConfigDto'
+        checker:
+          type: string
+          description: 复合人
+        fundAgencyPaydayPoList:
+          type: array
+          description: 交收日期配置
+          items:
+            $ref: '#/components/schemas/资金交收天数配置'
+        fundcode:
+          type: string
+          description: 产品代码
+        handleserialno:
+          type: string
+          description: 经办流水号
+        innerSettlementConfigDto:
+          $ref: '#/components/schemas/AgencySettlementConfigDto'
+        inserttimestamp:
+          type: string
+          description: 新增时间
+        operator:
+          type: string
+          description: 经办人
+        qsFundInfoDetailsPo:
+          $ref: '#/components/schemas/QsFundInfoDetailsPo'
+        qsFundInfoDto:
+          $ref: '#/components/schemas/产品信息'
+        status:
+          type: string
+          description: 处理状态
+        trusteetplcode:
+          type: string
+          description: 托管行交收
+        updatetimestamp:
+          type: string
+          description: 更新时间
+        zdSign:
+          type: string
+          description: 中登标识
+      description: 产品信息及资金交收配置明细
+    Map«string,ParamInfoVo»:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ParamInfoVo'
+    ParamInfoVo:
+      type: object
+      properties:
+        status:
+          type: string
+        totalCount:
+          type: integer
+          format: int32
+    QsFundInfoDetailsPo:
+      type: object
+      properties:
+        checker:
+          type: string
+          description: 复合人
+        currency:
+          type: string
+        datasource:
+          type: string
+        fchangefund:
+          type: string
+        fczlx:
+          type: string
+        fdesc:
+          type: string
+        ffounddate:
+          type: string
+        ffundcode:
+          type: string
+        ffundname:
+          type: string
+        ffundnameabbr:
+          type: string
+        ffundnumber:
+          type: string
+        ffundstate:
+          type: string
+        ffundstatus:
+          type: string
+        ffundtype:
+          type: string
+        fjzfund:
+          type: string
+        fmarketid:
+          type: string
+        fmjjzr:
+          type: string
+        fsedate:
+          type: string
+        fzdyfundtype:
+          type: string
+        handleserialno:
+          type: string
+          description: 经办流水号
+        inserttimestamp:
+          type: string
+          description: 新增时间
+        investment:
+          type: string
+        isetf:
+          type: string
+        isfof:
+          type: string
+        isinitiate:
+          type: string
+        isqdii:
+          type: string
+        maincode:
+          type: string
+        operationmode:
+          type: string
+        operator:
+          type: string
+          description: 经办人
+        status:
+          type: string
+          description: 处理状态
+        tano:
+          type: string
+        updatetimestamp:
+          type: string
+          description: 更新时间
+    Response«FundInfoExtDetailDto»:
+      type: object
+      properties:
+        body:
+          $ref: '#/components/schemas/FundInfoExtDetailDto'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«List«ClsSelectItemVo»»:
+      type: object
+      properties:
+        body:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClsSelectItemVo'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«List«FileBankAccountInfoPo»»:
+      type: object
+      properties:
+        body:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileBankAccountInfoPo'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«List«SelectItemPo»»:
+      type: object
+      properties:
+        body:
+          type: array
+          items:
+            $ref: '#/components/schemas/SelectItemPo'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«List«SelectItemVo»»:
+      type: object
+      properties:
+        body:
+          type: array
+          items:
+            $ref: '#/components/schemas/SelectItemVo'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«Map«string,ParamInfoVo»»:
+      type: object
+      properties:
+        body:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ParamInfoVo'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«QsFundInfoDetailsPo»:
+      type: object
+      properties:
+        body:
+          $ref: '#/components/schemas/QsFundInfoDetailsPo'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«SettlementFlowTemplateDto»:
+      type: object
+      properties:
+        body:
+          $ref: '#/components/schemas/SettlementFlowTemplateDto'
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    Response«string»:
+      type: object
+      properties:
+        body:
+          type: string
+        returnCode:
+          type: integer
+          format: int32
+        returnMsg:
+          type: string
+        returnType:
+          type: string
+    SelectItemPo:
+      type: object
+      properties:
+        checked:
+          type: string
+        text:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+    SelectItemVo:
+      type: object
+      properties:
+        checked:
+          type: boolean
+        text:
+          type: string
+        value:
+          type: string
+    SettlementFlowTemplateDto:
+      type: object
+      properties:
+        checker:
+          type: string
+          description: 复合人
+        confname:
+          type: string
+        handleserialno:
+          type: string
+          description: 经办流水号
+        inserttimestamp:
+          type: string
+          description: 新增时间
+        operator:
+          type: string
+          description: 经办人
+        serialno:
+          type: string
+        settlementFlowTemplatePos:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementFlowTemplatePo'
+        status:
+          type: string
+          description: 处理状态
+        updatetimestamp:
+          type: string
+          description: 更新时间
+    SettlementFlowTemplatePo:
+      type: object
+      properties:
+        agencySettle:
+          type: boolean
+        busitag:
+          type: string
+        checker:
+          type: string
+        commandlevel:
+          type: string
+        commandmonitorid:
+          type: string
+        commandno:
+          type: string
+        confCommandMonitorPo:
+          $ref: '#/components/schemas/ConfCommandMonitorPo'
+        confCommandPo:
+          $ref: '#/components/schemas/ConfCommandPo'
+        confname:
+          type: string
+        handleserialno:
+          type: string
+        inserttimestamp:
+          type: string
+        iszd:
+          type: string
+        operator:
+          type: string
+        orderid:
+          type: number
+        ruleid:
+          type: string
+        status:
+          type: string
+        tplcode:
+          type: string
+        updatetimestamp:
+          type: string
+    产品信息:
+      required:
+      - currency
+      - ffundcode
+      - ffundname
+      - ffundnameabbr
+      - ffundstatus
+      - ffundtype
+      - investment
+      - isetf
+      - isfof
+      - isinitiate
+      - isqdii
+      - maincode
+      - operationmode
+      - tano
+      type: object
+      properties:
+        currency:
+          type: string
+          description: 币种
+        ffounddate:
+          type: string
+          description: 产品成立日
+        ffundcode:
+          type: string
+          description: 产品代码
+        ffundname:
+          type: string
+          description: 产品名称
+        ffundnameabbr:
+          type: string
+          description: 基金简称
+        ffundstatus:
+          type: string
+          description: 产品状态
+        ffundtype:
+          type: string
+          description: 产品类型
+        fmarketid:
+          type: string
+          description: 节假日
+        fmjjzr:
+          type: string
+          description: 募集截止日期
+        fsedate:
+          type: string
+          description: 募集起始日期
+        fzdyfundtype:
+          type: string
+          description: 自定义类型
+        investment:
+          type: string
+          description: 投资对象
+        isetf:
+          type: string
+          description: 是否场内
+        isfof:
+          type: string
+          description: 是否FOF
+        isinitiate:
+          type: string
+          description: 是否发起式
+        isqdii:
+          type: string
+          description: 是否QDII
+        maincode:
+          type: string
+          description: 产品主代码
+        operationmode:
+          type: string
+          description: 运作模式
+        tano:
+          type: string
+          description: TA代码
+    资金交收天数配置:
+      required:
+      - ffundcode
+      - fjsdate
+      - ftgjsdate
+      - ftradetype
+      type: object
+      properties:
+        busitag:
+          type: string
+          description: 业务标识
+        datasource:
+          type: string
+          description: 数据源
+        enddate:
+          type: string
+          description: 结束日期
+        fcompfunds:
+          type: string
+          description: 交收模式
+        ffundcode:
+          type: string
+          description: 基金代码
+        fjsdate:
+          type: string
+          description: 交收日期
+        fjzfund:
+          type: string
+          description: 基准基金
+        fmjrate:
+          type: number
+          description: 募集期利率
+        fqrdate:
+          type: string
+          description: 确认日期
+        ftgjsdate:
+          type: string
+          description: 托管行交收日期
+        ftradetype:
+          type: string
+          description: 交易类型
+        fundname:
+          type: string
+          description: 基金名称
+        fyzdate:
+          type: string
+          description: 验资日
+        organCodeList:
+          type: array
+          description: 机构列表
+          items:
+            type: string
+        startdate:
+          type: string
+          description: 起始日期
