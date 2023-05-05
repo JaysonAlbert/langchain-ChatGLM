@@ -3,7 +3,7 @@ from langchain.llms.openai import OpenAI
 from langchain.requests import RequestsWrapper
 
 from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
-os.environ['OPENAI_API_KEY'] = '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'
+os.environ['OPENAI_API_KEY'] = 'your openai key'
 
 from langchain.agents.agent_toolkits.openapi import planner
 
