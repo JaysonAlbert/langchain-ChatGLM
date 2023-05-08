@@ -167,6 +167,10 @@ output/*
 log/*
 .chroma
 vector_store/*
+content/*
+api_content/*
 
 llm/*
 embedding/*
+
+pyrightconfig.json
