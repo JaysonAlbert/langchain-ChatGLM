@@ -20,7 +20,7 @@ paths:
     get:
       tags:
       - fund-param-controller
-      summary: 查询单个基金
+      description: 查询单个基金
       operationId: queryFundUsingGET
       parameters:
       - name: fundCode
@@ -36,7 +36,7 @@ paths:
           type: string
       - name: querySign
         in: query
-        description: 可选SUMMARY\:已生效数据, OPERATE\:待复核数据, CHECK\:待复核数据
+        description: 查询标识，可选SUMMARY\:已生效数据, OPERATE\:待复核数据, CHECK\:待复核数据
         required: true
         schema:
           type: string
@@ -60,22 +60,25 @@ paths:
     get:
       tags:
       - fund-settlement-param-controller
-      summary: 查询单条基金资金交收配置
+      description: 查询单条基金资金交收配置
       operationId: selectOneUsingGET
       parameters:
       - name: fundCode
         in: query
         description: 基金代码
+        required: true
         schema:
           type: string
       - name: status
         in: query
-        description: 处理状态
+        description: 处理状态, 1-待复核, 2-已复核,
+        required: true
         schema:
           type: string
       - name: querySign
         in: query
-        description: 查询标识
+        description: 查询标识，可选SUMMARY\:已生效数据, OPERATE\:待复核数据, CHECK\:待复核数据
+        required: true
         schema:
           type: string
       responses:
@@ -85,358 +88,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Response«FundInfoExtDetailDto»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/handle/template/names:
-    get:
-      tags:
-      - settlement-flow-template-controller
-      summary: settlementNameList
-      operationId: settlementNameListUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«SelectItemPo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/handle/template/one:
-    get:
-      tags:
-      - settlement-flow-template-controller
-      summary: 查询单个指令划拨模板
-      operationId: queryOneTemplateUsingGET
-      parameters:
-      - name: tplCode
-        in: query
-        description: tplCode
-        schema:
-          type: string
-      - name: status
-        in: query
-        description: status
-        schema:
-          type: string
-      - name: querySign
-        in: query
-        description: querySign
-        schema:
-          type: string
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«SettlementFlowTemplateDto»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/account/Item:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: cls代销账户下拉列表
-      operationId: dxAccountItemUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«ClsSelectItemVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/account/incompleteInfo:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 查询非全量账户信息
-      operationId: queryIncompleteAccountsUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«FileBankAccountInfoPo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/confFare/group:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 费用配置——按状态分组
-      operationId: confFareGroupUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/fund/group:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 基金信息——按状态分组
-      operationId: fundGroupUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/fund/isZhongDeng:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 判断是否中登基金
-      operationId: isZhongDengUsingGET
-      parameters:
-      - name: fundCode
-        in: query
-        description: fundCode
-        schema:
-          type: string
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«string»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/fund/selectItem:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 查询所有基金下拉列表
-      operationId: queryAllFundItemUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/fundSettlement/group:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 资金交收配置——按状态分组
-      operationId: fundSettlementGroupUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/institution/group:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 机构信息——按状态分组
-      operationId: institutionGroupUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/institution/selectItem:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 查询所有机构下拉列表
-      operationId: queryAllInstitutionItemUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/rule/group:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 交收规则配置——按状态分组
-      operationId: ruleGroupUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/rule/selectItem:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 查询所有交收规则下拉列表
-      operationId: queryAllRuleItemUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/template/group:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 指令模板配置——按状态分组
-      operationId: templateGroupUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«Map«string,ParamInfoVo»»'
-        401:
-          description: Unauthorized
-          content: {}
-        403:
-          description: Forbidden
-          content: {}
-        404:
-          description: Not Found
-          content: {}
-  /csp/v1/parameter/info/template/selectItem:
-    get:
-      tags:
-      - parameter-stats-controller
-      summary: 查询所有指令模板下拉列表
-      operationId: queryAlTemplateItemUsingGET
-      responses:
-        200:
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Response«List«SelectItemVo»»'
         401:
           description: Unauthorized
           content: {}

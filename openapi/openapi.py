@@ -38,5 +38,5 @@ llm = OpenAI(model_name="text-davinci-003", temperature=0.0)
 
 openai_requests_wrapper = RequestsWrapper(headers=headers)
 openai_agent = planner.create_openapi_agent(csp_api_spec, openai_requests_wrapper, llm)
-user_query = "基金000330的赎回交易是哪天交收的"
+user_query = "基金代码为000330的产品赎回交易是哪天交收的"
 openai_agent.run(user_query)
