@@ -16,7 +16,7 @@ paths:
     get:
       tags:
       - fund-param-controller
-      summary: 查询单个基金
+      description: 查询单个基金
       operationId: queryFundUsingGET
       parameters:
       - name: fundCode
@@ -57,7 +57,7 @@ paths:
     get:
       tags:
       - fund-settlement-param-controller
-      summary: 查询单条基金资金交收配置
+      description: 查询单条基金资金交收配置
       operationId: selectOneUsingGET
       parameters:
       - name: fundCode
